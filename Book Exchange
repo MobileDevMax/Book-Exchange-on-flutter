@@ -1,0 +1,125 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(BookExchangeApp());
+}
+
+class BookExchangeApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Book Exchange',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: BookListScreen(),
+    );
+  }
+}
+
+class Book {
+  final String title;
+  final String author;
+  final String coverUrl;
+
+  Book({required this.title, required this.author, required this.coverUrl});
+}
+
+class BookListScreen extends StatefulWidget {
+  @override
+  _BookListScreenState createState() => _BookListScreenState();
+}
+
+class _BookListScreenState extends State<BookListScreen> {
+  final List<Book> books = [
+    Book(title: '1984', author: 'George Orwell', coverUrl: 'https://covers.openlibrary.org/b/id/7222246-L.jpg'),
+    Book(title: 'Brave New World', author: 'Aldous Huxley', coverUrl: 'https://covers.openlibrary.org/b/id/6591683-L.jpg'),
+    Book(title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', coverUrl: 'https://covers.openlibrary.org/b/id/6468742-L.jpg'),
+    Book(title: 'War and Peace', author: 'Leo Tolstoy', coverUrl: 'https://covers.openlibrary.org/b/id/7237604-L.jpg'),
+    Book(title: 'Pride and Prejudice', author: 'Jane Austen', coverUrl: 'https://covers.openlibrary.org/b/id/5615126-L.jpg'),
+    Book(title: 'The Catcher in the Rye', author: 'J.D. Salinger', coverUrl: 'https://covers.openlibrary.org/b/id/8170691-L.jpg'),
+    Book(title: 'The Hobbit', author: 'J.R.R. Tolkien', coverUrl: 'https://covers.openlibrary.org/b/id/7446895-L.jpg'),
+  ];
+
+  void _showAddBookDialog() {
+    final titleController = TextEditingController();
+    final authorController = TextEditingController();
+    final coverUrlController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Add Book"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(labelText: 'Title'),
+              ),
+              TextField(
+                controller: authorController,
+                decoration: InputDecoration(labelText: 'Author'),
+              ),
+              TextField(
+                controller: coverUrlController,
+                decoration: InputDecoration(labelText: 'Cover URL'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                final book = Book(
+                  title: titleController.text,
+                  author: authorController.text,
+                  coverUrl: coverUrlController.text,
+                );
+                setState(() {
+                  books.add(book);
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text("Add"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancel"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Book Exchange'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: _showAddBookDialog,
+          )
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: books.length,
+        itemBuilder: (context, index) {
+          final book = books[index];
+          return ListTile(
+            leading: Image.network(book.coverUrl, width: 50, fit: BoxFit.cover),
+            title: Text(book.title),
+            subtitle: Text(book.author),
+            onTap: () {
+            },
+          );
+        },
+      ),
+    );
+  }
+}
